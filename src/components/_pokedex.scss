@@ -1,0 +1,30 @@
+.dex{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid whitesmoke;
+
+    img{
+        padding: 1rem;
+    }
+
+    .dex-name{
+        font-size: 1.5em;
+        text-transform: uppercase;
+        align-self: center;
+    }
+
+    button{
+        padding: 2rem;
+        font-size: 1.4em;
+        cursor: pointer;
+    }
+}
+
+.dex-list{
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}

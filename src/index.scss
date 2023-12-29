@@ -1,0 +1,14 @@
+@import 'components/navbar';
+@import 'components/pokedex';
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: monospace;
+}
+
+body{
+  background-color: #232323;
+  color: whitesmoke;
+}
