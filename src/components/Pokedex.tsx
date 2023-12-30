@@ -1,13 +1,19 @@
 import pokedex from '../assets/pokedex.png';
 
-const Pokedex = ({name}: {name: string}) => {
+interface PokedexProps {
+    name: string;
+    onClick: () => void;
+  }
+
+const Pokedex: React.FC<PokedexProps> = ({ name, onClick }: PokedexProps) => {
+
     return(
     <div className="dex">
         <img src={pokedex} alt="pokedex"/>
 
         <h1 className="dex-name">{name}</h1>
 
-        <button>Go</button>
+        <button onClick={onClick}>Go</button>
 
     </div>
     )
