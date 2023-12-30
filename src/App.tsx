@@ -31,6 +31,7 @@ function App() {
 
   const handleTitleClick = () => {
     setIsPokedexSelected(false);
+    setPokemonSearch("");
   };
 
   const scrollToTop = () => {

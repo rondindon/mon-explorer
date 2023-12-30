@@ -26,6 +26,8 @@
 
 .pokemon{
     width: 20%;
+    max-width: 20%;
+    min-width: 25rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
