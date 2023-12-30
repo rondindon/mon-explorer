@@ -1,10 +1,27 @@
-.mon-list{
+.mons{
     display: flex;
-    gap: 5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding-bottom: 5rem;
+    gap: 5rem;
+
+    .search-bar{
+        align-self: center;
+        input{
+            padding: 1.5rem 4.5rem;
+            &::placeholder{
+                color: #232323;
+            }
+        }
+    }
+
+    .mon-list{
+        display: flex;
+        gap: 5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 5rem;
+    }
 }
 
 .pokemon{
@@ -22,6 +39,7 @@
     }
     .mon-name{
         text-transform: capitalize;
+        font-size: 1.7em;
     }
     .mon-img{
         height: 20rem;
