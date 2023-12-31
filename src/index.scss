@@ -2,6 +2,11 @@
 @import 'components/pokedex';
 @import 'components/pokemon';
 
+@font-face {
+  font-family: "Rajdhani";
+  src: url(./assets/fonts/Rajdhani-Regular.ttf);
+}
+
 *{
   margin: 0;
   padding: 0;

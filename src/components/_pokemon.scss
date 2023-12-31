@@ -21,6 +21,7 @@
         justify-content: center;
         align-items: center;
         padding-bottom: 5rem;
+        transition: .3s;
     }
 }
 
@@ -38,6 +39,7 @@
     -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
     -moz-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
     box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+    transition: .3s;
 
     .mon-entry{
         font-weight: normal;
