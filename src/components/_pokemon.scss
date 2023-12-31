@@ -35,6 +35,9 @@
     cursor: pointer;
     padding-top: 2.5rem;
     border: 1px solid whitesmoke;
+    -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+    -moz-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+    box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
 
     .mon-entry{
         font-weight: normal;

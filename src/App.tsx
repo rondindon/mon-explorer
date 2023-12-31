@@ -2,7 +2,7 @@ import axios from "axios";
 import Navbar from "./components/Navbar";
 import Pokedex from "./components/Pokedex";
 import { useEffect, useState } from "react";
-import PokemonEntry from "./components/PokemonEntry";
+import InfiniteScrollPokemon from "./components/InfiniteScrollPokemon";
 
 function App() {
   const pokedexURL = "https://pokeapi.co/api/v2/pokedex";
@@ -32,42 +32,36 @@ function App() {
   const handleTitleClick = () => {
     setIsPokedexSelected(false);
     setPokemonSearch("");
+    setSelectedPokemonPokedex([]);
   };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const filteredPokemon = selectedPokemonPokedex.filter((pokemon) =>
-    pokemon.pokemon_species.name.toLowerCase().includes(pokemonSearch.toLowerCase())
-  );
+  const filteredPokemon = selectedPokemonPokedex.filter((pokemon) => {
+    const entryNumberString = `${pokemon.entry_number}`;
+    const isNameMatch = pokemon.pokemon_species.name.toLowerCase().includes(pokemonSearch.toLowerCase());
+    const isEntryNumberMatch = entryNumberString === pokemonSearch;
+    return isNameMatch || isEntryNumberMatch;
+  });
 
   return (
     <>
       <Navbar onTitleClick={handleTitleClick} />
 
       {isPokedexSelected ? (
-          <div className="mons">
-
-            <div className="search-bar">
-              <input
-                type="text"
-                placeholder="Search Pokemon"
-                value={pokemonSearch}
-                onChange={(e) => setPokemonSearch(e.target.value)}
-              />
-            </div>
-
-            <div className="mon-list">
-              {filteredPokemon.map((pokemon, index) => (
-                <PokemonEntry
-                  key={index}
-                  entryNumber={pokemon.entry_number}
-                  speciesName={pokemon.pokemon_species.name}
-                  speciesUrl={pokemon.pokemon_species.url}
-                />
-              ))}
+        <div className="mons">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search Pokemon"
+              value={pokemonSearch}
+              onChange={(e) => setPokemonSearch(e.target.value)}
+            />
           </div>
+
+          <InfiniteScrollPokemon pokemonSearch={pokemonSearch} pokemonSpecies={filteredPokemon}/>
 
         </div>
       ) : (
