@@ -7,7 +7,9 @@
     .search-bar{
         align-self: center;
         input{
-            padding: 1.5rem 4.5rem;
+            width: 25rem;
+            height: 5rem;
+            padding: 1rem;
             &::placeholder{
                 color: #232323;
             }
@@ -47,6 +49,13 @@
     .mon-name{
         text-transform: capitalize;
         font-size: 1.7em;
+    }
+    .mon-types{
+        display: flex;
+        gap: 1rem;
+        .mon-type{
+            height: 3rem;
+        }
     }
     .mon-img{
         height: 20rem;

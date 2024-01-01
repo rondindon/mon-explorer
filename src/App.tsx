@@ -55,7 +55,7 @@ function App() {
           <div className="search-bar">
             <input
               type="text"
-              placeholder="Search Pokemon"
+              placeholder="Search Pokemon or Entry Number"
               value={pokemonSearch}
               onChange={(e) => setPokemonSearch(e.target.value)}
             />
