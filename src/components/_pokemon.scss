@@ -60,7 +60,7 @@
     }
     .mon-img{
         height: 20rem;
-        object-fit: cover;
+        object-fit: contain;
         transition: .3s;
         &:hover{
             scale: 1.02;

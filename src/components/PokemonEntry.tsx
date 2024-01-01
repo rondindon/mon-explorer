@@ -20,8 +20,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${getPokemonNumber(speciesUrl)}.png`;
     const regularImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokemonNumber(speciesUrl)}.png`;
 
-    const handleIsShinyClick = () => {
-      console.log("SS");
+    const handleIsShinyClick = async () => {
       // Toggle isShiny only if shiny is available
       if (isShinyAvailable) {
         setIsShiny((prevIsShiny) => !prevIsShiny);
@@ -38,23 +37,29 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
           console.error('Error fetching Pokemon details:', error);
         }
 
-        const checkShinyAvailability = async () => {
-          try {
-            await axios.get(shinyImageUrl);
-            // Shiny image exists, set isShinyAvailable to true
-            setIsShinyAvailable(true);
-          } catch (error) {
-            // Shiny image doesn't exist, set isShinyAvailable to false
-            setIsShinyAvailable(false);
-          }
-          setIsShiny(false);
-        };
-      
-        checkShinyAvailability();
-      };
+      }
   
       fetchPokemonDetails();
-    }, [entryNumber]);
+    }, []);
+
+    useEffect(() => {
+      const checkShinyAvailability = async () => {
+        try {
+          await axios.get(shinyImageUrl);
+          // Shiny image exists, set isShinyAvailable to true
+          setIsShinyAvailable(true);
+        } catch (error) {
+          // Shiny image doesn't exist, set isShinyAvailable to false
+          setIsShinyAvailable(false);
+          setIsShiny(false); // Move this line outside the try block
+        }
+        
+      };
+    
+      checkShinyAvailability();
+
+    }, []);
+    
 
   return (
     <div className="pokemon">
@@ -66,6 +71,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
           key={index} 
           className={`mon-type ${type.toLowerCase()}`}
           src={`/src/assets/types/${type.toLowerCase()}.webp`}
+          loading="lazy"
           />
         ))}
       </div>
@@ -74,6 +80,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         src={isShiny ? shinyImageUrl : regularImageUrl}
         alt={speciesName}
         onClick={handleIsShinyClick}
+        loading="lazy"
       />
     </div>
   );

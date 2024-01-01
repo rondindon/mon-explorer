@@ -21,22 +21,15 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
 
   useEffect(() => {
     fetchData();
-  }, [pokemonSpecies]); // Load initial data and when pokemonSpecies changes
-
-  useEffect(() => {
-    console.log(pokemonSearch);
-  }, [pokemonSearch]);
+  }, [pokemonSpecies,pokemonSearch]); // Load initial data and when pokemonSpecies changes
 
   const fetchMoreData = () => {
-    console.log('xd',offset)
     const newData = pokemonSpecies.slice(offset, offset + limit);
     setPokemonData((prevData) => [...prevData, ...newData]);
     setOffset((prevOffset) => prevOffset + limit);
   };
 
   const fetchData = () => {
-    console.log(offset);
-    console.log("dsd")
     const newData = pokemonSpecies.slice(0, limit);
     setPokemonData(newData);
     setOffset(limit);
