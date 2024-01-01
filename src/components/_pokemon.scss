@@ -51,6 +51,7 @@
         font-size: 1.7em;
     }
     .mon-types{
+        margin-top: 2rem;
         display: flex;
         gap: 1rem;
         .mon-type{
@@ -59,6 +60,7 @@
     }
     .mon-img{
         height: 20rem;
+        object-fit: cover;
         transition: .3s;
         &:hover{
             scale: 1.02;

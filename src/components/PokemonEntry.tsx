@@ -5,10 +5,9 @@ interface PokemonEntryProps {
   entryNumber: number;
   speciesName: string;
   speciesUrl: string;
-  pokemonSearch: string;
 }
 
-const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl, pokemonSearch }) => {
+const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl }) => {
     const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
     const [isShiny, setIsShiny] = useState<boolean>(false);
     const [types, setTypes] = useState<string[]>([]);
@@ -22,6 +21,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     const regularImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokemonNumber(speciesUrl)}.png`;
 
     const handleIsShinyClick = () => {
+      console.log("SS");
       // Toggle isShiny only if shiny is available
       if (isShinyAvailable) {
         setIsShiny((prevIsShiny) => !prevIsShiny);
@@ -37,26 +37,24 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         } catch (error) {
           console.error('Error fetching Pokemon details:', error);
         }
+
+        const checkShinyAvailability = async () => {
+          try {
+            await axios.get(shinyImageUrl);
+            // Shiny image exists, set isShinyAvailable to true
+            setIsShinyAvailable(true);
+          } catch (error) {
+            // Shiny image doesn't exist, set isShinyAvailable to false
+            setIsShinyAvailable(false);
+          }
+          setIsShiny(false);
+        };
+      
+        checkShinyAvailability();
       };
   
       fetchPokemonDetails();
     }, [entryNumber]);
-
-    useEffect(() => {
-      const checkShinyAvailability = async () => {
-        try {
-          await axios.get(shinyImageUrl);
-          // Shiny image exists, set isShinyAvailable to true
-          setIsShinyAvailable(true);
-        } catch (error) {
-          // Shiny image doesn't exist, set isShinyAvailable to false
-          setIsShinyAvailable(false);
-        }
-        setIsShiny(false);
-      };
-    
-      checkShinyAvailability();
-    }, [shinyImageUrl,pokemonSearch]);
 
   return (
     <div className="pokemon">
