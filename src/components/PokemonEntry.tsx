@@ -5,9 +5,10 @@ interface PokemonEntryProps {
   entryNumber: number;
   speciesName: string;
   speciesUrl: string;
+  pokemonSearch :string;
 }
 
-const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl }) => {
+const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl,pokemonSearch }) => {
     const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
     const [isShiny, setIsShiny] = useState<boolean>(false);
     const [types, setTypes] = useState<string[]>([]);
@@ -38,11 +39,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         }
 
       }
-  
-      fetchPokemonDetails();
-    }, []);
 
-    useEffect(() => {
       const checkShinyAvailability = async () => {
         try {
           await axios.get(shinyImageUrl);
@@ -55,10 +52,15 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         }
         
       };
-    
+
+      fetchPokemonDetails();
       checkShinyAvailability();
 
     }, []);
+
+    useEffect(() => {
+      setIsShiny(false);
+    }, [pokemonSearch]);
     
 
   return (

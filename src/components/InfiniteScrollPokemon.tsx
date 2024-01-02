@@ -63,6 +63,7 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
                     entryNumber={pokemon.entry_number}
                     speciesName={pokemon.pokemon_species.name}
                     speciesUrl={pokemon.pokemon_species.url}
+                    pokemonSearch={pokemonSearch}
                     />
                 ))}
                 
