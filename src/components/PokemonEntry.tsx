@@ -1,5 +1,6 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
 
 interface PokemonEntryProps {
   entryNumber: number;
@@ -12,6 +13,8 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
     const [isShiny, setIsShiny] = useState<boolean>(false);
     const [types, setTypes] = useState<string[]>([]);
+
+    const speciesNameRef = useRef(speciesName);
 
     const getPokemonNumber = (url: string): string => {
         const matches = url.match(/\/(\d+)\/$/);
@@ -29,17 +32,10 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     };
 
     useEffect(() => {
-      const fetchPokemonDetails = async () => {
-        try {
-          const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${entryNumber}`);
-          const pokemonTypes = response.data.types.map((type: any) => type.type.name);
-          setTypes(pokemonTypes);
-        } catch (error) {
-          console.error('Error fetching Pokemon details:', error);
-        }
+      speciesNameRef.current = speciesName;
+    }, [speciesName]);
 
-      }
-
+    useEffect(() => {
       const checkShinyAvailability = async () => {
         try {
           await axios.get(shinyImageUrl);
@@ -50,13 +46,30 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
           setIsShinyAvailable(false);
           setIsShiny(false); // Move this line outside the try block
         }
-        
       };
-
-      fetchPokemonDetails();
       checkShinyAvailability();
+    }, [])
+    
 
-    }, []);
+    useEffect(() => {
+      const fetchPokemonDetails = async () => {
+        try {
+          const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${speciesNameRef.current}`);
+          const pokemonTypes = response.data.types.map((type: any) => type.type.name);
+          setTypes(pokemonTypes);
+        } catch (error) {
+          console.error('Error fetching Pokemon details:', error);
+        }
+
+      }
+      const debouncedFetchPokemonDetails = _.debounce(() => {
+        fetchPokemonDetails();
+      }, 10);
+
+
+      debouncedFetchPokemonDetails();
+
+    }, [speciesNameRef, pokemonSearch]);
 
     useEffect(() => {
       setIsShiny(false);
@@ -73,7 +86,6 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
           key={index} 
           className={`mon-type ${type.toLowerCase()}`}
           src={`/src/assets/types/${type.toLowerCase()}.webp`}
-          loading="lazy"
           />
         ))}
       </div>
