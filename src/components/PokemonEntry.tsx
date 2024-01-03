@@ -1,14 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
 
 interface PokemonEntryProps {
   entryNumber: number;
   speciesName: string;
   speciesUrl: string;
-  pokemonSearch: string;
-  sortCriteria: string; // Add sortCriteria prop
-  sortOrder: string; // Add sortOrder prop
 }
 
 interface Form {
@@ -18,176 +14,172 @@ interface Form {
   types: string[];
 }
 
+const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl }) => {
+  const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
+  const [isShiny, setIsShiny] = useState<boolean>(false);
+  const [types, setTypes] = useState<string[]>([]);
+  const [weight, setWeight] = useState<number | null>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  const [forms, setForms] = useState<Form[]>([]);
+  const [selectedForm, setSelectedForm] = useState<Form | null>(null);
+  const [exactPokemonName,setExactPokemonName] = useState<string>('');
 
-const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl, pokemonSearch, sortCriteria, sortOrder }) => {
-    const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
-    const [isShiny, setIsShiny] = useState<boolean>(false);
-    const [types, setTypes] = useState<string[]>([]);
-    const [weight, setWeight] = useState<number | null>(null);
-    const [height, setHeight] = useState<number | null>(null);
-    const [pokemonName, setPokemonName] = useState<string>("")
-    const [forms, setForms] = useState<Form[]>([]);
-    const [selectedForm, setSelectedForm] = useState<Form | null>(null);
+//   const getPokemonNumber = (url: string): number => {
+//     const matches = url.match(/\/(\d+)\/$/);
+//     return matches && matches.length === 2 ? parseInt(matches[1], 10) : 0;
+// };
 
-    const pokemonId = speciesUrl.match(/\/(\d+)\/$/)?.[1];
+  const pokemonId = Number(speciesUrl.match(/\/(\d+)\/$/)?.[1]);
+  const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${selectedForm?.id.toString()}.png`;
+  const regularImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
 
-    const entryNumberRef = useRef(entryNumber);
-    const pokemonIdRef = useRef(pokemonId);
-    const speciesNameRef = useRef(speciesName);
+  useEffect(() => {
+    const fetchPokemonDetails = async () => {
+      try {
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+        const pokemonTypes = response.data.types.map((type: any) => type.type.name);
+        setTypes(pokemonTypes);
 
-    const getPokemonNumber = (url: string): number => {
-      const matches = url.match(/\/(\d+)\/$/);
-      return matches && matches.length === 2 ? parseInt(matches[1], 10) : 0;
+        const weightKG = Number((response.data.weight * 0.1).toFixed(2));
+        const heightM = Number((response.data.height * 0.1).toFixed(3));
+
+        setWeight(weightKG);
+        setHeight(heightM);
+      } catch (error) {
+        console.error('Error fetching Pokemon details:', error);
+      }
+    };
+
+    const fetchForms = async () => {  
+      try {
+        const responseForms = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
+        setExactPokemonName(responseForms.data.name);
+        const varieties = responseForms.data.varieties;
+        
+        const defaultForm: Form = {
+          id: pokemonId,
+          isShiny: false,
+          imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
+          types: [],
+        };
+
+        if (varieties && varieties.length > 1) {
+          const formList: Form[] = [
+            defaultForm,
+            ...varieties
+              .filter((variety: any) => !variety.is_default)
+              .map((variety: any) => {
+                const formId = variety.pokemon.url.split('/').slice(-2, -1)[0];
+                const formImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formId}.png`;
+                
+                const form: Form = {
+                  id: parseInt(formId, 10),
+                  isShiny: false,
+                  imageUrl: formImageUrl,
+                  types: [],
+                };
+                return form;
+              }),
+          ];
+
+          // Fetch type information for each form
+          await Promise.all(
+            formList.map(async (form) => {
+              const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${form.id}`);
+              form.types = response.data.types.map((type: any) => type.type.name);
+            })
+          );
+
+          setForms(formList);
+          setSelectedForm(formList[0]); // Set the default selected form
+        } else {
+          setForms([defaultForm]);
+          setSelectedForm(defaultForm);
+        }
+      } catch (error) {
+        console.error('Error fetching Pokemon forms:', error);
+      }
+    };
+
+    const checkShinyAvailability = async () => {
+      try {
+        await axios.get(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png`);
+        setIsShinyAvailable(true);
+      } catch (error) {
+        setIsShinyAvailable(false);
+        setIsShiny(false);
+      }
+    };
+
+    const fetchData = async () => {
+      await Promise.all([fetchPokemonDetails(), fetchForms(), checkShinyAvailability()]);
+    };
+
+    fetchData();
+  }, [entryNumber, speciesName]);
+
+  const handleIsShinyClick = () => {
+    // Toggle isShiny only if shiny is available
+    if (isShinyAvailable) {
+      setIsShiny((prevIsShiny) => !prevIsShiny);
+    }
   };
 
-    const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${selectedForm?.id}.png`;
-    const regularImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokemonNumber(speciesUrl)}.png`;
-
-    const handleIsShinyClick = async () => {
-      // Toggle isShiny only if shiny is available
-      if (isShinyAvailable) {
-        setIsShiny((prevIsShiny) => !prevIsShiny);
-      }
-    };
-
-    const handleArrowClick = (direction: 'prev' | 'next') => {
-      const currentIndex = forms.findIndex((form) => selectedForm?.id === form.id);
-      let newIndex;
+  const handleArrowClick = async (direction: 'prev' | 'next') => {
+    const currentIndex = forms.findIndex((form) => selectedForm?.id === form.id);
+    let newIndex;
   
-      if (direction === 'prev') {
-        newIndex = currentIndex - 1 < 0 ? forms.length - 1 : currentIndex - 1;
-      } else {
-        newIndex = currentIndex + 1 >= forms.length ? 0 : currentIndex + 1;
-      }
+    if (direction === 'prev') {
+      newIndex = currentIndex - 1 < 0 ? forms.length - 1 : currentIndex - 1;
+    } else {
+      newIndex = currentIndex + 1 >= forms.length ? 0 : currentIndex + 1;
+    }
   
-      setSelectedForm(forms[newIndex]);
-      console.log(selectedForm?.id)
-    };
+    const newSelectedForm = forms[newIndex];
 
-    useEffect(() => {
-      entryNumberRef.current = entryNumber;
-    }, [entryNumber]);
-
-    useEffect(() => {
-      pokemonIdRef.current = pokemonId;
-    }, [pokemonId]);
-
-    useEffect(() => {
-      speciesNameRef.current = speciesName;
-    }, [speciesName]);
-
-    useEffect(() => {
-      const checkShinyAvailability = async () => {
-        try {
-          await axios.get(shinyImageUrl);
-          setIsShinyAvailable(true);
-        } catch (error) {
-          setIsShinyAvailable(false);
-          setIsShiny(false);
-        }
-      };
-      checkShinyAvailability();
-    }, [getPokemonNumber])
-    
-
-    useEffect(() => {
-      const fetchPokemonDetails = async () => {
-        try {
-          const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${speciesNameRef.current}`);
-          const pokemonTypes = response.data.types.map((type: any) => type.type.name);
-          setTypes(pokemonTypes);
-  
-          const weightKG = Number((response.data.weight * 0.1).toFixed(2));
-          const heightM = Number((response.data.height * 0.1).toFixed(3));
-  
-          setWeight(weightKG);
-          setHeight(heightM);
-        } catch (error) {
-          console.error('Error fetching Pokemon details:', error);
-        }
-      };
-
-      const debouncedFetchPokemonDetails = _.debounce(() => {
-        fetchPokemonDetails();
-      }, 5);
-  
-      debouncedFetchPokemonDetails();
-    }, [speciesName, pokemonSearch, sortCriteria, sortOrder]);
-
-    useEffect(() => {
+    try {
+      await axios.get(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${newSelectedForm.id}.png`);
+      setIsShinyAvailable(true);
+    } catch (error) {
+      setIsShinyAvailable(false);
       setIsShiny(false);
-    }, [pokemonSearch,sortOrder,sortCriteria,speciesName]);
-
-    useEffect(() => {
-      const fetchForms = async () => {
-        try {
-          const responseForms = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${getPokemonNumber(speciesUrl)}`);
-          const varieties = responseForms.data.varieties;
-          const defaultForm: Form = {
-            id: entryNumber,
-            isShiny: false,
-            imageUrl: regularImageUrl,
-            types: [], // Add types for the default form
-          };
-    
-          if (varieties && varieties.length > 1) {
-            const formList: Form[] = [
-              defaultForm,
-              ...varieties
-                .filter((variety: any) => !variety.is_default)
-                .map((variety: any) => {
-                  const formId = getPokemonNumber(variety.pokemon.url);
-                  const formImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${formId}.png`;
-                  const form: Form = {
-                    id: formId,
-                    isShiny: false,
-                    imageUrl: formImageUrl,
-                    types: [], // Initialize with an empty array for types
-                  };
-                  return form;
-                }),
-            ];
-    
-            // Fetch type information for each form
-            await Promise.all(
-              formList.map(async (form) => {
-                const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${form.id}`);
-                form.types = response.data.types.map((type: any) => type.type.name);
-              })
-            );
-    
-            setForms(formList);
-            setSelectedForm(formList[0]); // Set the default selected form
-          } else {
-            setForms([defaultForm]);
-            setSelectedForm(defaultForm);
-          }
-        } catch (error) {
-          console.error('Error fetching Pokemon forms:', error);
-        }
-      };
-    
-      fetchForms();
-    }, [pokemonSearch, sortOrder, sortCriteria, pokemonId])
-    
-    
+    }
+  
+    if (newSelectedForm.id !== pokemonId) {
+      try {
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${newSelectedForm.id}`);
+        const pokemonTypes = response.data.types.map((type: any) => type.type.name);
+        
+        setTypes(pokemonTypes);
+        setExactPokemonName(response.data.name);
+      } catch (error) {
+        console.error('Error fetching Pokemon details:', error);
+      }
+    }else{
+      const responseForms = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
+      setExactPokemonName(responseForms.data.name);
+    }
+  
+    setSelectedForm(newSelectedForm);
+  };
 
   return (
     <div className="pokemon">
-      <h1 className='mon-entry'>Pokédex entry : <strong>{entryNumber}</strong></h1>
-      <h2 className='mon-name'>{speciesName}</h2>
+      <h1 className="mon-entry">Pokédex entry : <strong>{entryNumber}</strong></h1>
+      <h2 className="mon-name">{exactPokemonName}</h2>
       <div className="mon-types">
         {types.map((type, index) => (
-          <img 
-          key={index} 
-          className={`mon-type ${type.toLowerCase()}`}
-          src={`/src/assets/types/${type.toLowerCase()}.webp`}
+          <img
+            key={index}
+            className={`mon-type ${type.toLowerCase()}`}
+            src={`/src/assets/types/${type.toLowerCase()}.webp`}
+            alt={type}
           />
         ))}
       </div>
 
       <img
-        className='mon-img'
+        className="mon-img"
         src={(isShiny && isShinyAvailable) ? shinyImageUrl : (selectedForm ? selectedForm.imageUrl : regularImageUrl)}
         alt={speciesName}
         onClick={handleIsShinyClick}
@@ -205,9 +197,9 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         <span className="height">{height}m</span>
         <span className="weight">{weight}kg</span>
       </div>
-
     </div>
   );
 };
 
 export default PokemonEntry;
+``
