@@ -1,10 +1,14 @@
 import axios from 'axios';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 
 interface PokemonEntryProps {
   entryNumber: number;
   speciesName: string;
   speciesUrl: string;
+  pokemonSearch: string;
+  sortCriteria: string;
+  sortOrder: string;
 }
 
 interface Form {
@@ -14,7 +18,7 @@ interface Form {
   types: string[];
 }
 
-const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl }) => {
+const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl, pokemonSearch, sortCriteria, sortOrder }) => {
   const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
   const [types, setTypes] = useState<string[]>([]);
@@ -24,14 +28,13 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [exactPokemonName,setExactPokemonName] = useState<string>('');
 
-//   const getPokemonNumber = (url: string): number => {
-//     const matches = url.match(/\/(\d+)\/$/);
-//     return matches && matches.length === 2 ? parseInt(matches[1], 10) : 0;
-// };
-
   const pokemonId = Number(speciesUrl.match(/\/(\d+)\/$/)?.[1]);
   const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${selectedForm?.id.toString()}.png`;
   const regularImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+
+  useEffect(() => {
+    setIsShiny(false);
+  }, [pokemonSearch,sortOrder,sortCriteria,speciesName]);
 
   useEffect(() => {
     const fetchPokemonDetails = async () => {
@@ -114,9 +117,13 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     const fetchData = async () => {
       await Promise.all([fetchPokemonDetails(), fetchForms(), checkShinyAvailability()]);
     };
+    
+    const debouncedFetchData = _.debounce(() => {
+      fetchData();
+    }, 5);
 
-    fetchData();
-  }, [entryNumber, speciesName]);
+    debouncedFetchData();
+  }, [entryNumber, speciesName, pokemonId]);
 
   const handleIsShinyClick = () => {
     // Toggle isShiny only if shiny is available
@@ -145,27 +152,23 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
       setIsShiny(false);
     }
   
-    if (newSelectedForm.id !== pokemonId) {
+    if (newSelectedForm.id) {
       try {
         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${newSelectedForm.id}`);
         const pokemonTypes = response.data.types.map((type: any) => type.type.name);
-        
+
         setTypes(pokemonTypes);
         setExactPokemonName(response.data.name);
       } catch (error) {
         console.error('Error fetching Pokemon details:', error);
       }
-    }else{
-      const responseForms = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
-      setExactPokemonName(responseForms.data.name);
     }
-  
     setSelectedForm(newSelectedForm);
   };
 
   return (
     <div className="pokemon">
-      <h1 className="mon-entry">Pokédex entry : <strong>{entryNumber}</strong></h1>
+      <h1 className="mon-entry">Pokédex entry : <strong>#{entryNumber}</strong></h1>
       <h2 className="mon-name">{exactPokemonName}</h2>
       <div className="mon-types">
         {types.map((type, index) => (
@@ -174,6 +177,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
             className={`mon-type ${type.toLowerCase()}`}
             src={`/src/assets/types/${type.toLowerCase()}.webp`}
             alt={type}
+            loading='lazy'
           />
         ))}
       </div>

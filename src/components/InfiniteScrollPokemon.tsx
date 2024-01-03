@@ -37,6 +37,12 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
     setOffset(limit);
   };
 
+  const handleRandomizeClick = () => {
+    const randomizedArray = [...pokemonSpecies].sort(() => Math.random() - 0.5);
+    setPokemonData(randomizedArray.slice(0, 50)); // Display the first 'offset' elements
+  };
+
+
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -55,28 +61,31 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
   }, [offset, pokemonSpecies]);
 
   return (
-    <div className="mon-list">
-        {pokemonData.length > 0 ? (
-            <>
-            
-                {pokemonData.map((pokemon, index) => (
-                    <PokemonEntry
-                    key={index}
-                    entryNumber={pokemon.entry_number}
-                    speciesName={pokemon.pokemon_species.name}
-                    speciesUrl={pokemon.pokemon_species.url}
-                    pokemonSearch={pokemonSearch}
-                    sortCriteria={sortCriteria}
-                    sortOrder={sortOrder}
-                    />
-                ))}
-                
-            </>
-      ) : (
-        
-        <p>No matching Pokemon found for the given search term.</p>
+    <div className="randomize">
+      <button data-front='Surprise me :)' data-back="Go" className='randomize-btn' onClick={handleRandomizeClick}></button>
+      <div className="mon-list">
+          {pokemonData.length > 0 ? (
+              <>
+              
+                  {pokemonData.map((pokemon, index) => (
+                      <PokemonEntry
+                      key={index}
+                      entryNumber={pokemon.entry_number}
+                      speciesName={pokemon.pokemon_species.name}
+                      speciesUrl={pokemon.pokemon_species.url}
+                      pokemonSearch={pokemonSearch}
+                      sortCriteria={sortCriteria}
+                      sortOrder={sortOrder}
+                      />
+                  ))}
+                  
+              </>
+        ) : (
+          
+          <p>No matching Pokemon found for the given search term.</p>
 
-      )}
+        )}
+      </div>
     </div>
   );
 };
