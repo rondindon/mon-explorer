@@ -43,7 +43,7 @@
                 .sort-select {
                     cursor: pointer;
                     font-size: 1.1em;
-                    padding: 1rem;
+                    padding: 1rem 1.5rem;
                     border: 1px solid #ccc;
                     border-radius: 4px;
                 }
@@ -59,46 +59,76 @@
         align-items: center;
         padding-bottom: 5rem;
         transition: .3s;
+
+        .pokemon{
+            position: relative;
+            width: 20%;
+            max-width: 20%;
+            min-width: 25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            cursor: pointer;
+            padding: 2.5rem 0;
+            border: 1px solid whitesmoke;
+            -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+            -moz-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+            box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+            transition: .3s;
+        
+            .mon-entry{
+                font-weight: normal;
+            }
+            .mon-name{
+                text-transform: capitalize;
+                font-size: 1.7em;
+            }
+            .mon-types{
+                margin-top: 2rem;
+                display: flex;
+                gap: 1rem;
+                .mon-type{
+                    height: 3rem;
+                }
+            }
+            .mon-img{
+                position: relative;
+                height: 20rem;
+                object-fit: contain;
+                transition: .3s;
+                &:hover{
+                    scale: 1.02;
+                }
+            }
+            .body-info{
+                display: flex;
+                gap: 2rem;
+                font-size: 1.3em;
+            }
+        }
     }
 }
 
-.pokemon{
-    width: 20%;
-    max-width: 20%;
-    min-width: 25rem;
+.form-arrows {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    cursor: pointer;
-    padding-top: 2.5rem;
-    border: 1px solid whitesmoke;
-    -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
-    -moz-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
-    box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
-    transition: .3s;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    
+    button {
+      background: none;
+      border: none;
+      font-size: 2.5em;
+      cursor: pointer;
+      color: whitesmoke;
+      transition: .3s;
 
-    .mon-entry{
-        font-weight: normal;
-    }
-    .mon-name{
-        text-transform: capitalize;
-        font-size: 1.7em;
-    }
-    .mon-types{
-        margin-top: 2rem;
-        display: flex;
-        gap: 1rem;
-        .mon-type{
-            height: 3rem;
-        }
-    }
-    .mon-img{
-        height: 20rem;
-        object-fit: contain;
-        transition: .3s;
-        &:hover{
-            scale: 1.02;
-        }
+      &:hover {
+        color: rgb(218, 195, 195);
+      }
     }
 }

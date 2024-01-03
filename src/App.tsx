@@ -99,7 +99,6 @@ function App() {
                       defaultValue={sortCriteria}
                       id="sortCriteria"
                       onChange={(e) => setSortCriteria(e.target.value)}
-                      value={sortCriteria}
                     >
                       <option value="entryNumber">Entry Number</option>
                       <option value="name">Name</option>
