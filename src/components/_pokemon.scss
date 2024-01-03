@@ -6,12 +6,47 @@
 
     .search-bar{
         align-self: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
         input{
             width: 25rem;
             height: 5rem;
             padding: 1rem;
             &::placeholder{
                 color: #232323;
+            }
+        }
+
+        .categories{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            .sort-order-button {
+                height: 100%;
+                cursor: pointer;
+                font-size: 2em;
+                border: none;
+                color: #232323;
+                background-color: whitesmoke;
+                padding: 1rem 1.5rem;
+              }
+              .select{
+                .sort-label {
+                    font-size: 1.4em;
+
+                }
+            
+                .sort-select {
+                    cursor: pointer;
+                    font-size: 1.1em;
+                    padding: 1rem;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                }
             }
         }
     }

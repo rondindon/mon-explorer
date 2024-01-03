@@ -6,10 +6,12 @@ interface PokemonEntryProps {
   entryNumber: number;
   speciesName: string;
   speciesUrl: string;
-  pokemonSearch :string;
+  pokemonSearch: string;
+  sortCriteria: string; // Add sortCriteria prop
+  sortOrder: string; // Add sortOrder prop
 }
 
-const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl,pokemonSearch }) => {
+const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl, pokemonSearch, sortCriteria, sortOrder }) => {
     const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
     const [isShiny, setIsShiny] = useState<boolean>(false);
     const [types, setTypes] = useState<string[]>([]);
@@ -48,7 +50,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         }
       };
       checkShinyAvailability();
-    }, [])
+    }, [getPokemonNumber])
     
 
     useEffect(() => {
@@ -64,12 +66,11 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
       }
       const debouncedFetchPokemonDetails = _.debounce(() => {
         fetchPokemonDetails();
-      }, 10);
-
+      }, 5);
 
       debouncedFetchPokemonDetails();
 
-    }, [speciesNameRef, pokemonSearch]);
+    }, [speciesNameRef, pokemonSearch, sortCriteria, sortOrder]);
 
     useEffect(() => {
       setIsShiny(false);

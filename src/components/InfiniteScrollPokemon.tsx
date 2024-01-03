@@ -12,9 +12,11 @@ interface PokemonSpecies {
 interface ScrollProps {
   pokemonSearch: string;
   pokemonSpecies: PokemonSpecies[];
+  sortCriteria: string;
+  sortOrder: string;
 }
 
-const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSpecies }) => {
+const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSpecies, sortCriteria, sortOrder }) => {
   const [pokemonData, setPokemonData] = useState<PokemonSpecies[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const limit = 30;
@@ -64,6 +66,8 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
                     speciesName={pokemon.pokemon_species.name}
                     speciesUrl={pokemon.pokemon_species.url}
                     pokemonSearch={pokemonSearch}
+                    sortCriteria={sortCriteria}
+                    sortOrder={sortOrder}
                     />
                 ))}
                 

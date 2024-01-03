@@ -11,12 +11,25 @@ function App() {
   const [selectedPokemonPokedex, setSelectedPokemonPokedex] = useState<Array<any>>([]);
   const [isPokedexSelected, setIsPokedexSelected] = useState<boolean>(false);
   const [pokemonSearch, setPokemonSearch] = useState<string>("");
+  const [sortCriteria, setSortCriteria] = useState<string>('entryNumber'); // 'name', 'entryNumber', 'type', 'weight', etc.
+  const [sortOrder, setSortOrder] = useState<string>('asc'); // 'asc' or 'desc'
 
   useEffect(() => {
+    // Load data from localStorage on component mount
+    const savedSearch = localStorage.getItem("pokemonSearch");
+    if (savedSearch) {
+      setPokemonSearch(savedSearch);
+    }
+
     axios.get(pokedexURL).then((response) => {
       setPokedexes(response.data.results);
     });
   }, []);
+
+  useEffect(() => {
+    // Save data to localStorage whenever pokemonSearch changes
+    localStorage.setItem("pokemonSearch", pokemonSearch);
+  }, [pokemonSearch]);
 
   const handlePokedexClick = async (url: string) => {
     try {
@@ -46,41 +59,84 @@ function App() {
     return isNameMatch || isEntryNumberMatch;
   });
 
+  const getSortedPokemon = () => {
+    switch (sortCriteria) {
+      case 'name':
+        return sortOrder === 'asc'
+          ? [...filteredPokemon].sort((a, b) => a.pokemon_species.name.localeCompare(b.pokemon_species.name))
+          : [...filteredPokemon].sort((a, b) => b.pokemon_species.name.localeCompare(a.pokemon_species.name));
+      case 'entryNumber':
+        return sortOrder === 'asc'
+          ? [...filteredPokemon].sort((a, b) => a.entry_number - b.entry_number)
+          : [...filteredPokemon].sort((a, b) => b.entry_number - a.entry_number);
+      // Add cases for other criteria (type, weight, etc.)
+      default:
+        return [...filteredPokemon];
+    }
+  };
+  
+  const sortedPokemon = getSortedPokemon();
+
   return (
-    <>
-      <Navbar onTitleClick={handleTitleClick} />
 
-      {isPokedexSelected ? (
-        <div className="mons">
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search Pokemon or Entry Number"
-              value={pokemonSearch}
-              onChange={(e) => setPokemonSearch(e.target.value)}
-            />
+      <>
+        <Navbar onTitleClick={handleTitleClick} />
+
+        {isPokedexSelected ? (
+          <div className="mons">
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search Pokemon or Entry Number"
+                value={pokemonSearch}
+                onChange={(e) => setPokemonSearch(e.target.value)}
+              />
+              <div className="categories">
+                <div className="select">
+                  <label className="sort-label" htmlFor="sortCriteria">Sort by: </label>
+                    <select
+                      className="sort-select"
+                      defaultValue={sortCriteria}
+                      id="sortCriteria"
+                      onChange={(e) => setSortCriteria(e.target.value)}
+                      value={sortCriteria}
+                    >
+                      <option value="entryNumber">Entry Number</option>
+                      <option value="name">Name</option>
+                      
+                      {/* Add additional sorting criteria options as needed */}
+                    </select>
+                  </div>
+
+                  <button 
+                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                  className="sort-order-button"
+                  >{sortOrder === 'asc' ? '↑' : '↓'}
+                  </button>
+              </div>
+
+            </div>
+
+            <InfiniteScrollPokemon pokemonSearch={pokemonSearch} pokemonSpecies={sortedPokemon} sortOrder={sortOrder} sortCriteria={sortCriteria}/>
+
           </div>
+        ) : (
+          <div className="dex-list">
+            {pokedexes.map((pokedex, index) => (
+              <Pokedex
+                name={pokedex.name}
+                key={index}
+                onClick={() => handlePokedexClick(pokedex.url)}
+              />
+            ))}
+          </div>
+        )}
 
-          <InfiniteScrollPokemon pokemonSearch={pokemonSearch} pokemonSpecies={filteredPokemon}/>
-
-        </div>
-      ) : (
-        <div className="dex-list">
-          {pokedexes.map((pokedex, index) => (
-            <Pokedex
-              name={pokedex.name}
-              key={index}
-              onClick={() => handlePokedexClick(pokedex.url)}
-            />
-          ))}
-        </div>
-      )}
-
-      <button className="scroll-to-top" onClick={scrollToTop}>
-        ↑
-      </button>
-    </>
+        <button className="scroll-to-top" onClick={scrollToTop}>
+          ↑
+        </button>
+      </>
   );
-}
+};
 
 export default App;
