@@ -192,8 +192,8 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
 
       {forms.length > 1 && (
         <div className="form-arrows">
-          <button onClick={() => handleArrowClick('prev')}>←</button>
-          <button onClick={() => handleArrowClick('next')}>→</button>
+          <button className='left-arrow arrow' onClick={() => handleArrowClick('prev')}>←</button>
+          <button className='right-arrow arrow' onClick={() => handleArrowClick('next')}>→</button>
         </div>
       )}
 
