@@ -187,7 +187,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         src={(isShiny && isShinyAvailable) ? shinyImageUrl : (selectedForm ? selectedForm.imageUrl : regularImageUrl)}
         alt={speciesName}
         onClick={handleIsShinyClick}
-        loading="lazy"
+
       />
 
       {forms.length > 1 && (
