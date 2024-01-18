@@ -27,6 +27,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   const [forms, setForms] = useState<Form[]>([]);
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [exactPokemonName,setExactPokemonName] = useState<string>('');
+  const [isCardVisible, setIsCardVisible] = useState(false);
 
   const pokemonId = Number(speciesUrl.match(/\/(\d+)\/$/)?.[1]);
   const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${selectedForm?.id.toString()}.png`;
@@ -35,6 +36,15 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   useEffect(() => {
     setIsShiny(false);
   }, [pokemonSearch,sortOrder,sortCriteria,speciesName]);
+
+  useEffect(() => {
+    const cardVisibilityTimeout = setTimeout(() => {
+      setIsCardVisible(true);
+    }, 350);
+    return () => {
+      clearTimeout(cardVisibilityTimeout);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchPokemonDetails = async () => {
@@ -167,7 +177,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   };
 
   return (
-    <div className="pokemon">
+    <div className={`pokemon ${isCardVisible ? 'visible' : ''}`}>
       <h1 className="mon-entry">Pokédex entry : <strong>#{entryNumber}</strong></h1>
       <h2 className="mon-name">{exactPokemonName}</h2>
       <div className="mon-types">
@@ -187,7 +197,6 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         src={(isShiny && isShinyAvailable) ? shinyImageUrl : (selectedForm ? selectedForm.imageUrl : regularImageUrl)}
         alt={speciesName}
         onClick={handleIsShinyClick}
-
       />
 
       {forms.length > 1 && (

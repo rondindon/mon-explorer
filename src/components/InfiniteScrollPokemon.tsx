@@ -22,7 +22,7 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
   const [loading, setLoading] = useState<boolean>(false);
   const [randomizeButtonDisabled, setRandomizeButtonDisabled] = useState(false);
   const [infiniteScrollActive, setInfiniteScrollActive] = useState<boolean>(true);
-  const limit = 30;
+  const limit = 20;
 
   useEffect(() => {
     fetchData();
