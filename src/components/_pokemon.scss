@@ -51,6 +51,7 @@
         }
     }
     .randomize{
+        transition: opacity 0s;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -80,7 +81,6 @@
                 -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
                 -moz-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
                 box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
-                transition: .3s;
             
                 .mon-entry{
                     font-weight: normal;
@@ -205,7 +205,7 @@
   .pokemon {
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   }
   
   .pokemon.visible {

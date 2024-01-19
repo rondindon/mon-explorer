@@ -48,7 +48,7 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
     setInfiniteScrollActive(false);
     setLoading(true);
     const randomizedArray = [...pokemonSpecies].sort(() => Math.random() - 0.5);
-    const firstFiftyPokemon = randomizedArray.slice(0, 50);
+    const firstFiftyPokemon = randomizedArray.slice(0, 48);
     setPokemonData(firstFiftyPokemon);
     setLoading(false);
     setRandomizeButtonDisabled(true);

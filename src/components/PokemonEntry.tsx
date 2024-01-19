@@ -24,6 +24,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   const [types, setTypes] = useState<string[]>([]);
   const [weight, setWeight] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
+  const [exactEntryNumber, setExactEntryNumber] = useState<number | null>(null);
   const [forms, setForms] = useState<Form[]>([]);
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [exactPokemonName,setExactPokemonName] = useState<string>('');
@@ -38,15 +39,18 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   }, [pokemonSearch,sortOrder,sortCriteria,speciesName]);
 
   useEffect(() => {
+
     const cardVisibilityTimeout = setTimeout(() => {
       setIsCardVisible(true);
     }, 350);
+
     return () => {
       clearTimeout(cardVisibilityTimeout);
     };
-  }, []);
+  }, [sortCriteria, sortOrder, pokemonId]);
 
   useEffect(() => {
+    setIsCardVisible(false);
     const fetchPokemonDetails = async () => {
       try {
         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
@@ -56,6 +60,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         const weightKG = Number((response.data.weight * 0.1).toFixed(2));
         const heightM = Number((response.data.height * 0.1).toFixed(3));
 
+        setExactEntryNumber(entryNumber);
         setWeight(weightKG);
         setHeight(heightM);
       } catch (error) {
@@ -125,6 +130,8 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     };
 
     const fetchData = async () => {
+      const delay = (ms:any) => new Promise((resolve) => setTimeout(resolve, ms));
+      await delay(150);
       await Promise.all([fetchPokemonDetails(), fetchForms(), checkShinyAvailability()]);
     };
     
@@ -178,7 +185,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
 
   return (
     <div className={`pokemon ${isCardVisible ? 'visible' : ''}`}>
-      <h1 className="mon-entry">Pokédex entry : <strong>#{entryNumber}</strong></h1>
+      <h1 className="mon-entry">Pokédex entry : <strong>#{exactEntryNumber}</strong></h1>
       <h2 className="mon-name">{exactPokemonName}</h2>
       <div className="mon-types">
         {types.map((type, index) => (
