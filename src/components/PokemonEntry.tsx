@@ -237,7 +237,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
       )}
 
       <button className="evolution-button" onClick={handleEvolutionButtonClick}>
-          Show Evolution
+          Show Evolution Line
       </button>
 
       <div className="body-info">
