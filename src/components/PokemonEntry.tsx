@@ -1,6 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
+import Modal from './Modal';
 
 interface PokemonEntryProps {
   entryNumber: number;
@@ -21,6 +22,7 @@ interface Form {
 const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl, pokemonSearch, sortCriteria, sortOrder }) => {
   const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
+
   const [types, setTypes] = useState<string[]>([]);
   const [weight, setWeight] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
@@ -28,13 +30,18 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   const [forms, setForms] = useState<Form[]>([]);
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [exactPokemonName,setExactPokemonName] = useState<string>('');
+
   const [isCardVisible, setIsCardVisible] = useState(false);
+
+  const [evolutionChain, setEvolutionChain] = useState<any>(null);
+  const [showEvolutionModal, setShowEvolutionModal] = useState(false);
 
   const pokemonId = Number(speciesUrl.match(/\/(\d+)\/$/)?.[1]);
   const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${selectedForm?.id.toString()}.png`;
   const regularImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
 
   useEffect(() => {
+    setShowEvolutionModal(false)
     setIsShiny(false);
   }, [pokemonSearch,sortOrder,sortCriteria,speciesName]);
 
@@ -129,10 +136,21 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
       }
     };
 
+    const fetchEvolutionChain = async () => {
+      try {
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
+        const evolutionChainUrl = response.data.evolution_chain.url;
+        const evolutionChainResponse = await axios.get(evolutionChainUrl);
+        setEvolutionChain(evolutionChainResponse.data);
+      } catch (error) {
+        console.error('Error fetching evolution chain:', error);
+      }
+    };
+
     const fetchData = async () => {
       const delay = (ms:any) => new Promise((resolve) => setTimeout(resolve, ms));
       await delay(150);
-      await Promise.all([fetchPokemonDetails(), fetchForms(), checkShinyAvailability()]);
+      await Promise.all([fetchPokemonDetails(), fetchForms(), checkShinyAvailability(),fetchEvolutionChain()]);
     };
     
     const debouncedFetchData = _.debounce(() => {
@@ -141,12 +159,17 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
 
     debouncedFetchData();
   }, [entryNumber, speciesName, pokemonId]);
+  
 
   const handleIsShinyClick = () => {
     // Toggle isShiny only if shiny is available
     if (isShinyAvailable) {
       setIsShiny((prevIsShiny) => !prevIsShiny);
     }
+  };
+
+  const handleEvolutionButtonClick = () => {
+    setShowEvolutionModal(true);
   };
 
   const handleArrowClick = async (direction: 'prev' | 'next') => {
@@ -213,13 +236,44 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         </div>
       )}
 
+      <button className="evolution-button" onClick={handleEvolutionButtonClick}>
+          Show Evolution
+      </button>
+
       <div className="body-info">
         <span className="height">{height}m</span>
         <span className="weight">{weight}kg</span>
       </div>
+      {showEvolutionModal && (
+      <Modal onClose={() => setShowEvolutionModal(false)}>
+        {renderEvolutionChain(evolutionChain.chain)}
+      </Modal>
+        )}
     </div>
   );
 };
 
+const renderEvolutionChain = (evolution: any) => {
+  const id = evolution.species.url.split('/').slice(-2, -1)[0];
+  const renderPokemon = (pokemon: any) => (
+    <div key={pokemon?.id} className="evolution-pokemon">
+      <img
+        key={pokemon?.id}
+        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
+      />
+      <p>{pokemon?.name.charAt(0).toUpperCase() + pokemon?.name.slice(1)}</p>
+    </div>
+  );
+
+  return (
+    <>
+      {renderPokemon(evolution.species)}
+      {evolution.evolves_to && evolution.evolves_to.length > 0 && (
+        <div className="evolution-arrow">&#8594;</div>
+      )}
+      {evolution.evolves_to && evolution.evolves_to.map(renderEvolutionChain)}
+    </>
+  );
+};
+
 export default PokemonEntry;
-``

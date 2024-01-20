@@ -75,7 +75,6 @@
                 flex-direction: column;
                 gap: 1rem;
                 align-items: center;
-                cursor: pointer;
                 padding: 2.5rem 0;
                 border: 1px solid whitesmoke;
                 -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
@@ -102,8 +101,23 @@
                     height: 20rem;
                     object-fit: contain;
                     transition: .3s;
+                    cursor: pointer;
                     &:hover{
                         scale: 1.02;
+                    }
+                }
+                .evolution-button{
+                    padding: 0.4rem 0.8rem;
+                    background-color: #232323;
+                    color: #f5f5f5;
+                    cursor: pointer;
+                    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+                    border: 1px solid #f5f5f5;
+
+                    &:hover{
+                        -webkit-box-shadow: 0px 0px 7px 1px rgba(245,245,245,1);
+                        -moz-box-shadow: 0px 0px 7px 1px rgba(245,245,245,1);
+                        box-shadow: 0px 0px 7px 1px rgba(245,245,245,1);
                     }
                 }
                 .body-info{
