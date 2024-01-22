@@ -207,6 +207,12 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   };
 
   return (
+    <>
+    {showEvolutionModal && (
+      <Modal onClose={() => setShowEvolutionModal(false)}>
+        {renderEvolutionChain(evolutionChain.chain)}
+      </Modal>
+        )}
     <div className={`pokemon ${isCardVisible ? 'visible' : ''}`}>
       <h1 className="mon-entry">Pokédex entry : <strong>#{exactEntryNumber}</strong></h1>
       <h2 className="mon-name">{exactPokemonName}</h2>
@@ -244,12 +250,8 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
         <span className="height">{height}m</span>
         <span className="weight">{weight}kg</span>
       </div>
-      {showEvolutionModal && (
-      <Modal onClose={() => setShowEvolutionModal(false)}>
-        {renderEvolutionChain(evolutionChain.chain)}
-      </Modal>
-        )}
     </div>
+    </>
   );
 };
 
@@ -266,13 +268,13 @@ const renderEvolutionChain = (evolution: any) => {
   );
 
   return (
-    <>
+    <React.Fragment key={evolution.species.name}>
       {renderPokemon(evolution.species)}
       {evolution.evolves_to && evolution.evolves_to.length > 0 && (
         <div className="evolution-arrow">&#8594;</div>
       )}
       {evolution.evolves_to && evolution.evolves_to.map(renderEvolutionChain)}
-    </>
+    </React.Fragment>
   );
 };
 

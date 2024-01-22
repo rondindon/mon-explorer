@@ -69,6 +69,7 @@
     
             .pokemon{
                 position: relative;
+                z-index: 1000 !important;
                 width: 20%;
                 max-width: 35rem;
                 min-width: 30rem;
@@ -81,6 +82,7 @@
                 -webkit-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
                 -moz-box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
                 box-shadow: 2px 2px 15px 0px rgba(245,245,245,1);
+
             
                 .mon-entry{
                     font-weight: normal;
