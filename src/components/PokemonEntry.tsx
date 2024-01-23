@@ -221,7 +221,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
           <img
             key={index}
             className={`mon-type ${type.toLowerCase()}`}
-            src={`pokemon-finder/src/assets/types/${type.toLowerCase()}.webp`}
+            src={`/public/assets/types/${type.toLowerCase()}.webp`}
             alt={type}
             loading='lazy'
           />
