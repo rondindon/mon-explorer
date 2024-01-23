@@ -148,6 +148,8 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
     };
 
     const fetchData = async () => {
+      const delay = (ms:any) => new Promise((resolve) => setTimeout(resolve, ms));
+      await delay(50);
       await Promise.all([fetchPokemonDetails(), fetchForms(), checkShinyAvailability(),fetchEvolutionChain()]);
     };
     
