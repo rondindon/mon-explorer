@@ -38,11 +38,9 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
   };
 
   const fetchData = () => {
-    console.log('fetchData called')
     const newData = pokemonSpecies.slice(0, limit);
     setPokemonData(newData);
     setOffset(limit);
-    console.log(pokemonData)
   };
 
   const handleRandomizeClick = () => {
