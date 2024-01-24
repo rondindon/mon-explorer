@@ -28,7 +28,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Save data to localStorage whenever pokemonSearch changes
     localStorage.setItem("pokemonSearch", pokemonSearch);
   }, [pokemonSearch]);
 
@@ -84,7 +83,7 @@ function App() {
 
   useEffect(() => {
     setSuggestedResults([]);
-    if (pokemonSearch.trim() !== '' && suggestedResults.length === 0 && pokemonSearch.length > 1 && pokemonSearch.slice(-1) !== ')') {
+    if (pokemonSearch.trim() !== '' && suggestedResults.length === 0 && pokemonSearch.length > 1) {
       setSuggestedResults(sortedPokemon.slice(0, 5));
     } else {
       setSuggestedResults([]);

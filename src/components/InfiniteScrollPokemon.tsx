@@ -25,8 +25,9 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
   const limit = 20;
 
   useEffect(() => {
+    setInfiniteScrollActive(true);
     fetchData();
-  }, [pokemonSpecies,pokemonSearch]); // Load initial data and when pokemonSpecies changes
+  }, [pokemonSpecies]); // Load initial data and when pokemonSpecies changes
 
   const fetchMoreData = () => {
     setLoading(true);
@@ -36,12 +37,12 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
     setLoading(false);
   };
 
-  const fetchData = (data?: PokemonSpecies[]) => {
-    setLoading(true);
-    const newData = data ? data.slice(0, limit) : pokemonSpecies.slice(0, limit);
+  const fetchData = () => {
+    console.log('fetchData called')
+    const newData = pokemonSpecies.slice(0, limit);
     setPokemonData(newData);
     setOffset(limit);
-    setLoading(false);
+    console.log(pokemonData)
   };
 
   const handleRandomizeClick = () => {
@@ -68,11 +69,12 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
       if (!infiniteScrollActive) {
         return;
       }
-
-      if (
-        window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.offsetHeight
-      ) {
+    
+      const scrollTop = Math.ceil(document.documentElement.scrollTop);
+      const windowHeight = window.innerHeight;
+      const offsetHeight = document.documentElement.offsetHeight;
+    
+      if (scrollTop === offsetHeight - windowHeight) {
         fetchMoreData();
       }
     };
@@ -82,7 +84,7 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [offset, pokemonSpecies, infiniteScrollActive]);
+  }, [offset, infiniteScrollActive]);
 
   return (
     <div className="randomize">
