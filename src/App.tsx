@@ -13,6 +13,7 @@ function App() {
   const [pokemonSearch, setPokemonSearch] = useState<string>("");
   const [sortCriteria, setSortCriteria] = useState<string>('entryNumber'); // 'name', 'entryNumber', 'type', 'weight', etc.
   const [sortOrder, setSortOrder] = useState<string>('asc'); // 'asc' or 'desc'
+  const [suggestedResults, setSuggestedResults] = useState<Array<any>>([]);
 
   useEffect(() => {
     // Load data from localStorage on component mount
@@ -30,6 +31,10 @@ function App() {
     // Save data to localStorage whenever pokemonSearch changes
     localStorage.setItem("pokemonSearch", pokemonSearch);
   }, [pokemonSearch]);
+
+  const handleSuggestionClick = (suggestion : string) => {
+    setPokemonSearch(suggestion);
+  };
 
   const handlePokedexClick = async (url: string) => {
     try {
@@ -77,6 +82,15 @@ function App() {
   
   const sortedPokemon = getSortedPokemon();
 
+  useEffect(() => {
+    setSuggestedResults([]);
+    if (pokemonSearch.trim() !== '' && suggestedResults.length === 0 && pokemonSearch.length > 1 && pokemonSearch.slice(-1) !== ')') {
+      setSuggestedResults(sortedPokemon.slice(0, 5));
+    } else {
+      setSuggestedResults([]);
+    }
+  }, [pokemonSearch]);
+
   return (
 
       <>
@@ -85,12 +99,23 @@ function App() {
         {isPokedexSelected ? (
           <div className="mons">
             <div className="search-bar">
-              <input
-                type="text"
-                placeholder="Search Pokemon or Entry Number"
-                value={pokemonSearch}
-                onChange={(e) => setPokemonSearch(e.target.value)}
-              />
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Search Pokemon or Entry Number"
+                  value={pokemonSearch}
+                  onChange={(e) => setPokemonSearch(e.target.value)}
+                />
+                {suggestedResults.length > 0 && (
+                <ul className="suggested-results">
+                  {suggestedResults.map((suggestion, index) => (
+                    <li key={index} onClick={() => handleSuggestionClick(suggestion.pokemon_species.name)}>
+                      {suggestion.pokemon_species.name}
+                    </li>
+                  ))}
+                </ul>
+                )}
+              </div>
               <div className="categories">
                 <div className="select">
                   <label className="sort-label" htmlFor="sortCriteria">Sort by: </label>

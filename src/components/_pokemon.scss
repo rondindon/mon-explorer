@@ -10,13 +10,42 @@
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
-        
-        input{
-            width: 25rem;
-            height: 5rem;
-            padding: 1rem;
-            &::placeholder{
+
+        .search-container{
+            position: relative;
+            z-index: 1000;
+            input{
+                width: 25rem;
+                height: 5rem;
+                padding: 1rem;
+                &::placeholder{
+                    color: #232323;
+                }
+            }
+
+            .suggested-results {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                position: absolute;
+                top: 100%;
+                right: 0;
                 color: #232323;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                max-height: 200px;
+                overflow-y: auto;
+
+                li {
+                    padding: 8px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #f0f0f0;
+                    
+                  }
+                }
             }
         }
 
