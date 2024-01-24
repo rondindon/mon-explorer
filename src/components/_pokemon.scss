@@ -85,6 +85,7 @@
 
             
                 .mon-entry{
+                    font-size: 1.7em;
                     font-weight: normal;
                 }
                 .mon-name{
@@ -228,4 +229,29 @@
   .pokemon.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  @media (max-width: 450px) {
+    .mons{
+        padding: 1rem;
+        .randomize{
+            .mon-list{
+                gap: 2.5rem;
+                .pokemon{
+                    min-width: 22rem;
+                    min-height: 29rem;
+                    .mon-types{
+                        margin-top: 1rem;
+                        .mon-type{
+                            height: 2.5rem;
+                        }
+                    }
+                    .mon-img{
+                        height: 10rem;
+                    }
+                }
+            }
+        
+        }
+    }
   }
