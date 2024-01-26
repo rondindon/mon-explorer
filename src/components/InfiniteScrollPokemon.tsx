@@ -56,8 +56,6 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
     }, 300);
   };
 
-  console.log(offset);
-
   useEffect(() => {
     setInfiniteScrollActive(true);
   }, [sortCriteria,sortOrder])
@@ -71,8 +69,6 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
       const scrollTop = Math.ceil(document.documentElement.scrollTop);
       const windowHeight = window.innerHeight;
       const offsetHeight = document.documentElement.offsetHeight;
-
-      console.log(scrollTop, windowHeight, offsetHeight);
     
       if (scrollTop >= offsetHeight - windowHeight) {
         fetchMoreData();
