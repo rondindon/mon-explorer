@@ -30,11 +30,9 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
   }, [pokemonSpecies]); // Load initial data and when pokemonSpecies changes
 
   const fetchMoreData = () => {
-    setLoading(true);
     const newData = pokemonSpecies.slice(offset, offset + limit);
     setPokemonData((prevData) => [...prevData, ...newData]);
     setOffset((prevOffset) => prevOffset + limit);
-    setLoading(false);
   };
 
   const fetchData = () => {
@@ -58,6 +56,8 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
     }, 300);
   };
 
+  console.log(offset);
+
   useEffect(() => {
     setInfiniteScrollActive(true);
   }, [sortCriteria,sortOrder])
@@ -71,8 +71,10 @@ const InfiniteScrollPokemon: React.FC<ScrollProps> = ({ pokemonSearch, pokemonSp
       const scrollTop = Math.ceil(document.documentElement.scrollTop);
       const windowHeight = window.innerHeight;
       const offsetHeight = document.documentElement.offsetHeight;
+
+      console.log(scrollTop, windowHeight, offsetHeight);
     
-      if (scrollTop === offsetHeight - windowHeight) {
+      if (scrollTop >= offsetHeight - windowHeight) {
         fetchMoreData();
       }
     };
