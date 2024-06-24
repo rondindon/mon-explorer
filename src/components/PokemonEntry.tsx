@@ -162,6 +162,7 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   
 
   const handleIsShinyClick = () => {
+    
     // Toggle isShiny only if shiny is available
     if (isShinyAvailable) {
       setIsShiny((prevIsShiny) => !prevIsShiny);
