@@ -26,6 +26,7 @@
     z-index: 2000;
     cursor: crosshair;
     box-shadow: 0px 0px 30px 2px #f5f5f5;
+    justify-content: center;
   }
 
   .evolution-pokemon{
@@ -43,6 +44,6 @@
     .modal-content{
       flex-direction: column;
       gap: 1rem;
-      padding: 2rem 1rem;
+      padding: 2rem 1.7rem;
     }
   }

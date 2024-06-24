@@ -9,7 +9,7 @@ const Navbar: React.FC<NavbarProps> = ({ onTitleClick }) => {
   return (
     <header>
       <img src={logo} alt="logo"/>
-      <h1 className="title" onClick={onTitleClick}>Pokemon Finder</h1>
+      <h1 className="title" onClick={onTitleClick}>MonExplorer</h1>
     </header>
   );
 };
