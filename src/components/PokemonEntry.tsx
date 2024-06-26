@@ -20,6 +20,7 @@ interface Form {
 }
 
 const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, speciesUrl, pokemonSearch, sortCriteria, sortOrder }) => {
+  
   const [isShinyAvailable, setIsShinyAvailable] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
 
@@ -162,7 +163,6 @@ const PokemonEntry: React.FC<PokemonEntryProps> = ({ entryNumber, speciesName, s
   
 
   const handleIsShinyClick = () => {
-    
     // Toggle isShiny only if shiny is available
     if (isShinyAvailable) {
       setIsShiny((prevIsShiny) => !prevIsShiny);
